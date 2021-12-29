@@ -1,26 +1,22 @@
-import { createTheme, ThemeProvider } from '@material-ui/core';
-import CustomBtn from './components/customBtn'
-import './App.css';
+import React from 'react';
+import { BrowserRouter, Routes, Route } from "react-router-dom"
 
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#2E1667",
-    },
-    secondary: {
-      main: "#C7D8ED",
-    },
-  },
-})
+import Home from "./pages/Home"
+import Login from "./pages/Login"
+import Register from "./pages/Register"
+import NotFound from "./pages/NotFound"
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <ThemeProvider theme={theme}>
-        <CustomBtn/>
-      </ThemeProvider>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
   );
-}
+};
 
 export default App;
