@@ -2,37 +2,36 @@ import React, { useState } from 'react';
 
 const LoginForm = () => {
     
-    const [values, setValues] = useState({
+    const [value, setValues] = useState({
         email: '',
         password: '',
     });
 
     const [submitted, setSubmitted] = useState(false);
 
-    const handleEmailInputChange = (event) => {
-        event.persist();
-        setValues((values) => ({
-            ...values,
-            email: event.target.value,
-        }));
-    }
-    
-    const handlePasswordInputChange = (event) => {
-        event.persist();
-        setValues((values) => ({
-            ...values,
-            password: event.target.value,
+    const handleInputChange = (e) => {
+        e.persist();
+        setValues((value) => ({
+            ...value,
+            [e.target.name]: e.target.value,
         }));
     }
 
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        login();
+        setSubmitted(true);
+    }
+    
     const login = () => {
         fetch('http://localhost:3000/auth/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
+            mode: 'cors',
             body: JSON.stringify({
-                user: values,
+                user: value,
             }),
         })
             .then((res) => res.json())
@@ -43,21 +42,15 @@ const LoginForm = () => {
             });
     }
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        login();
-        setSubmitted(true);
-    }
-
     return (
         <div>
             <form onSubmit={handleSubmit}>
                 {submitted ? <div className="success-message">Succes !</div> : null}
                 <label for="email">Addresse e-mail</label>
-                <input type="email" name="email" required="required" value={values.email} onChange={handleEmailInputChange} placeholder='utilisateur@groupomania.fr' />
+                <input type="email" name="email" required="required" value={value.email} onChange={handleInputChange.bind(this)} placeholder='utilisateur@groupomania.fr' />
                 
                 <label for="password">Mot de passe</label>
-                <input type="password" name="password" value={values.password} onChange={handlePasswordInputChange} required="required" />
+                <input type="password" name="password" value={value.password} onChange={handleInputChange.bind(this)} required="required" />
 
                 <input type="submit" value="Connexion" />
             </form>

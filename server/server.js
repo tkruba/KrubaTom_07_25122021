@@ -14,7 +14,7 @@ const errorHandler = error => {
 server.on('error', errorHandler)
 server.on('listening', () => {
     const address = server.address()
-    console.log('Listening on :' + port)
+    console.log('Listening on ' + address + ':' + port)
 })
 
 server.listen(port)

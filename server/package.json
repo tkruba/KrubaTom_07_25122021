@@ -3,11 +3,15 @@
     "version": "1.0",
     "description": "NodeJS Server",
     "author": "Tom KRUBA",
-    "main": "server.js",
+    "main": "server/server.js",
     "scripts": {
-        "start": "node server.js"
+        "start": "node server.js",
+        "start.dev": "nodemon"
     },
     "dependencies": {
         "express": "^4.17.1"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.15"
     }
 }
