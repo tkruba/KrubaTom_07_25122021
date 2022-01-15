@@ -1,10 +1,12 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
+require('dotenv').config();
 
 const app = express();
 
 const authRoutes = require('./routes/auth');
+
 // Définie les controlles d'accès pour les requetes du serveur
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -16,4 +18,4 @@ app.use((req, res, next) => {
 app.use(bodyParser.json());
 app.use('/auth', authRoutes);
 
-module.exports = app
+module.exports = app;

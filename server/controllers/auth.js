@@ -1,42 +1,51 @@
-exports.login = (req, res, next) => {
-    console.log(req.body);
+const bcrypt = require('bcrypt');
+
+const user = require('../models/user.model');
+
+
+const nameRegex = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
+const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$&*.?])(?=.*[0-9])(?=.*[a-z]).{7,15}/u;
+
+exports.login = async (req, res, next) => {
+    if (!req.body.email || !req.body.password) return res.status(400).json({error: "JSON invalide."});
+
+    if (!emailRegex.test(req.body.email)) return res.status(415).json({error: "Adresse e-mail invalide."});
+
+    if (await !user.isRegistered(req.body.email)) return res.status(500).json({error: "Utilisateur non trouvée."});
+
+    if (await !user.areCredentialsValid(req.body.email, req.body.password)) return res.status(500).json({error: "Mot de passe erroné."});
     res.status(200).json({
         message: "Connexion réussie."
     });
 }
 
-exports.register = (req, res, next) => {
-    if (req.body.firstname &&
-        req.body.surname &&
-        req.body.email &&
-        req.body.password &&
-        req.body.passwordConfirm) {
+exports.register = async (req, res, next) => {
+    
+    // Si firstname, surname, email, password et passwordconfirm ne sont pas présent: retourne une erreur. Sinon continue.
+    if (!req.body.firstname ||
+        !req.body.surname ||
+        !req.body.email ||
+        !req.body.password ||
+        !req.body.passwordConfirm) return res.status(400).json({ error: 'JSON invalide.' });
 
-        let nameRegex = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
-        let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    // Si regex non valide: retourne une erreur. Sinon continue.
+    if (!nameRegex.test(req.body.firstname) ||
+        !nameRegex.test(req.body.surname) ||
+        !emailRegex.test(req.body.email)) return res.status(415).json({ error: 'Données JSON non conforme.' });
 
-        if (nameRegex.test(req.body.firstname) &&
-            nameRegex.test(req.body.surname) &&
-            emailRegex.test(req.body.email)) {
+    // Si regex password et passwordConfirm !== password: retourne une erreur. Sinon continue.
+    if (!passwordRegex.test(req.body.password) ||
+        req.body.passwordConfirm !== req.body.password) return res.status(415).json({ error: 'Données de Mot de passe non conforme' });
 
-            let passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$&*.?])(?=.*[0-9])(?=.*[a-z]).{7,15}/u;
+    // Si email déjà enregistrée: retourne une erreur. Sinon continue.
+    if (await user.isRegistered(req.body.email)) return res.status(500).json({ error: 'Email déjà enregistrée.' });
 
-            if (passwordRegex.test(req.body.password) &&
-                req.body.passwordConfirm === req.body.password) {
-
-                    // if (!email.exist(bdd))
-                res.status(200).json({
-                    message: "Enregistrement réussi."
-                });
-            } else {
-                res.status(415).send(new Error('Données de Mot de passe non conforme'));
-            }
-        } else {
-            res.status(415).send(new Error('Données JSON non conforme.'));
-        }
-    } else {
-        // 400 Bad Request || 406 Not Acceptable ?
-        res.status(400).send(new Error('JSON non valide'));
-    }
-    console.log(req.body);
+    // Hash le mot de passe et enregistre l'utilisateur dans la BDD.
+    bcrypt.hash(req.body.password, 10).then(hash => {
+        user.register([req.body.firstname, req.body.surname, req.body.email, hash]);
+        res.status(200).json({ message: "Enregistrement réussi." });
+    }).catch(error => {
+        res.status(500).json({error});
+    });
 }
