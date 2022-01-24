@@ -36,5 +36,29 @@ module.exports = {
         } catch (err) {
             throw err;
         }
+    },
+
+    async getUser(email) {
+        try {
+            conn = await pool.getConnection();
+            query = "SELECT * FROM users WHERE email = ?";
+            const rows = await conn.query(query, email);
+            conn.end();
+            return rows[0];
+        } catch (err) {
+            throw err;
+        }
+    },
+
+    async isUserAdmin(userId) {
+        try {
+            conn = await pool.getConnection();
+            query = "SELECT isAdmin FROM users WHERE id = ?";
+            const rows = await conn.query(query, userId);
+            conn.end();
+            return (rows[0].isAdmin === 1) ? true : false;
+        } catch (err) {
+            throw err;
+        }
     }
 }
