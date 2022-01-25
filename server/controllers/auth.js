@@ -98,3 +98,8 @@ exports.refreshAccessToken = async (req, res) => {
         res.status(200);
     });
 }
+
+exports.logout = async (req, res, next) => {
+    res.clearCookie('groupomaniaAccessToken').clearCookie('groupomaniaRefreshToken');
+    return res.status(200).json({message: 'Deconnexion réussie'});
+}

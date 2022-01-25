@@ -41,7 +41,7 @@ module.exports = {
     async getAllPosts() {
         try {
             conn = await pool.getConnection();
-            query = "SELECT posts.id, posterId, message, imageUrl, firstname, surname, pictureUrl FROM posts INNER JOIN users WHERE posts.posterId = users.id ORDER BY datePublished DESC";
+            query = "SELECT posts.id, posterId, message, imageUrl, firstname, surname, pictureUrl, datePublished FROM posts INNER JOIN users WHERE posts.posterId = users.id ORDER BY datePublished DESC";
             const rows = await conn.query(query);
             conn.end();
             return rows;
