@@ -1,7 +1,15 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
+import { SForm, SLabel, SInput, SSubmit } from './style';
 
 const RegisterForm = () => {
+
+    const navigate = useNavigate();
+
+    const nameRegex = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
+    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$&*.?])(?=.*[0-9])(?=.*[a-z]).{7,15}/u;
 
     const [value, setValues] = useState({
         firstname: '',
@@ -22,10 +30,10 @@ const RegisterForm = () => {
     const handleInputChange = (e) => {
         e.persist();
 
-        if (e.target.id === "password" && !passwordValidate.test(e.target.value)) {
+        if (e.target.id === "password" && !passwordRegex.test(e.target.value)) {
             console.log("pwd no matching regex");
         }
-        if (e.target.id === "password" && passwordValidate.test(e.target.value)) {
+        if (e.target.id === "password" && passwordRegex.test(e.target.value)) {
             console.log("pwd matching regex");
         }
 
@@ -40,8 +48,6 @@ const RegisterForm = () => {
             [e.target.name]: e.target.value,
         }));
     }
-
-    const passwordValidate = new RegExp('(?=.*[A-Z])(?=.*[!@#$&*.?])(?=.*[0-9])(?=.*[a-z]).{7,15}');
 
     const register = () => {
 
@@ -63,25 +69,20 @@ const RegisterForm = () => {
                 if (res.ok) {
                     return res.json();
                 } else {
-                    let err = res.json();
+                    let err = res.json().error;
                     throw new Error(err);
                 }
             })
             .then(res => {
-                console.log(res);
+                navigate('/login');
             })
             .catch((err) => {
-                console.log("Error:", err);
+                //console.log(err);
             });
     }
 
     const handleSubmit = (event) => {
         event.preventDefault();
-
-        let nameRegex = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
-        let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-        let passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$&*.?])(?=.*[0-9])(?=.*[a-z]).{7,15}/u;
-
         if (nameRegex.test(firstname) &&
             nameRegex.test(surname) &&
             emailRegex.test(email) &&
@@ -94,26 +95,24 @@ const RegisterForm = () => {
     }
 
     return (
-        <div>
-            <form onSubmit={handleSubmit}>
-                <label for="firstname">Prénom</label>
-                <input type="text" name="firstname" required="required" value={value.firstname} onChange={handleInputChange.bind(this)} placeholder='Robert' />
+        <SForm onSubmit={handleSubmit}>
+            <SLabel for="firstname">Prénom</SLabel>
+            <SInput type="text" name="firstname" required="required" id="firstname" value={value.firstname} onChange={handleInputChange.bind(this)} placeholder='Robert' />
 
-                <label for="surname">Nom</label>
-                <input type="text" name="surname" required="required" value={value.surname} onChange={handleInputChange.bind(this)} placeholder='LAPALETTE' />
+            <SLabel for="surname">Nom</SLabel>
+            <SInput type="text" name="surname" required="required" id="surname" value={value.surname} onChange={handleInputChange.bind(this)} placeholder='LAPALETTE' />
 
-                <label for="email">Addresse e-mail</label>
-                <input type="email" name="email" required="required" value={value.email} onChange={handleInputChange.bind(this)} placeholder='utilisateur@groupomania.fr' />
+            <SLabel for="email">Adresse e-mail</SLabel>
+            <SInput type="email" name="email" required="required" id="email" value={value.email} onChange={handleInputChange.bind(this)} placeholder='utilisateur@groupomania.fr' />
 
-                <label for="password">Mot de passe</label>
-                <input type="password" name="password" id="password" required="required" value={value.password} onChange={handleInputChange.bind(this)} />
+            <SLabel for="password">Mot de passe</SLabel>
+            <SInput type="password" name="password" id="password" required="required" id="password" value={value.password} onChange={handleInputChange.bind(this)} />
 
-                <label for="passwordConfirm">Confirmation du mot de passe</label>
-                <input type="password" name="passwordConfirm" id="passwordConfirm" required="required" value={value.passwordConfirm} onChange={handleInputChange.bind(this)} />
+            <SLabel for="passwordConfirm">Confirmation du mot de passe</SLabel>
+            <SInput type="password" name="passwordConfirm" id="passwordConfirm" required="required" id="passwordConfirm" value={value.passwordConfirm} onChange={handleInputChange.bind(this)} />
 
-                <input type="submit" value="Connexion" />
-            </form>
-        </div>
+            <SSubmit type="submit" value="Créer un compte" />
+        </SForm>
     );
 }
 export default RegisterForm;
