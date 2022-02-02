@@ -1,0 +1,40 @@
+version: '3.9'
+
+services:
+  server:
+    build: ./server
+    command: node server.js
+    ports:
+      - 3000:3000
+    working_dir: /app/server
+    links:
+      - database:mariadb
+    volumes:
+      - ./:/app
+  
+  client:
+    build: ./client
+    ports:
+      - 8080:3000
+    expose:
+      - 8080
+    working_dir: /app/client
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+    command: npm start
+
+  database:
+    image: mariadb
+    restart: always
+    ports:
+      - 3306:3306
+    expose:
+      - 3306
+    volumes:
+      - .:/app/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: example

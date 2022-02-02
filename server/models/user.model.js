@@ -2,6 +2,8 @@ pool = require('../utils/database');
 const bcrypt = require('bcrypt');
 
 module.exports = {
+
+    // Vérifie si l'adresse e-mail est déjà enregistrée
     async isRegistered(email) {
         try {
             conn = await pool.getConnection();
@@ -14,6 +16,7 @@ module.exports = {
         }
     },
 
+    // Enregistre un utilisateur
     async register(data) {
         try {
             conn = await pool.getConnection();
@@ -26,6 +29,7 @@ module.exports = {
         }
     },
 
+    // Compare le mot de passe fournis avec celui enregistré
     async areCredentialsValid(email, password) {
         try {
             conn = await pool.getConnection();
@@ -38,6 +42,7 @@ module.exports = {
         }
     },
 
+    // Récupère les données d'un utilisateur spécifique via son adresse e-mail
     async getUser(email) {
         try {
             conn = await pool.getConnection();
@@ -50,6 +55,31 @@ module.exports = {
         }
     },
 
+    // Récupère les données d'un utilisateur spécifique via son ID
+    async getUserById(id) {
+        try {
+            conn = await pool.getConnection();
+            query = "SELECT * FROM users WHERE id = ?";
+            const rows = await conn.query(query, id);
+            conn.end();
+            return rows[0];
+        } catch (err) {
+            throw err;
+        }
+    },
+
+    async setUserProfilePicture(data) {
+        try {
+            conn = await pool.getConnection();
+            query = "UPDATE users SET pictureUrl = ? WHERE id = ?";
+            const rows = await conn.batch(query, [data]);
+            conn.end();
+            return rows[0];
+        } catch (err) {
+            throw err;
+        }
+    },
+    // Vérifie les permissions administrateurs d'un utilisateur spécifique via son ID
     async isUserAdmin(userId) {
         try {
             conn = await pool.getConnection();
@@ -57,6 +87,19 @@ module.exports = {
             const rows = await conn.query(query, userId);
             conn.end();
             return (rows[0].isAdmin === 1) ? true : false;
+        } catch (err) {
+            throw err;
+        }
+    },
+
+    // Supprime un utilisateur spécifique via son ID
+    async deleteUser(userId) {
+        try {
+            conn = await pool.getConnection();
+            query = "DELETE FROM users WHERE id = ?";
+            const rows = await conn.query(query, userId);
+            conn.end();
+            return rows;
         } catch (err) {
             throw err;
         }

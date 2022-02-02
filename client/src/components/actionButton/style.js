@@ -10,7 +10,13 @@ export const SMainActionButton = styled.div`
     bottom: 1em;
     right: 1em;
     cursor: pointer;
-    transition: background-color 1s;
+    transition: background-color 0.5s;
+    box-shadow: 0 0 10px hsla(0, 0%, 0%, 0.6);
+
+    & > img {
+        transition: filter 0.5s;
+        ${props => props.state ? null : "filter: brightness(0) invert(1);"};
+    }
 `;
 
 export const SActiveMenu = styled.div`
@@ -25,7 +31,7 @@ export const SActiveMenu = styled.div`
 
 export const SMenuItem = styled.p`
     color: white;
-    background-color: hsla(0, 0%, 50%, 0.5);
+    background-color: hsla(0, 0%, 40%, 0.5);
     border-top: 2px solid hsla(0, 0%, 100%, 0.3);
     border-left: 2px solid hsla(0, 0%, 100%, 0.3);
     backdrop-filter: blur(5px);

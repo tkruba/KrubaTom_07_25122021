@@ -1,54 +1,29 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../UserContext';
+
+import Header from '../components/header/Header';
 
 import Post from '../components/posts/Post';
 import MainActionButton from '../components/actionButton/MainActionButton';
 
-import { UserContext } from '../UserContext';
 
+// Page d'accueil
 const Home = () => {
 
+    // Liste des postes
     const [posts, setPosts] = useState([]);
+
+    // Utilisateur actif
     const { user, setUser } = useContext(UserContext);
 
     const navigate = useNavigate();
 
-    const [selectedFile, setSelectedFile] = useState();
-    const [isFilePicked, setFilePicked] = useState(false);
-
-    const changeHandler = (event) => {
-        setSelectedFile(event.target.files[0]);
-        setFilePicked(true);
-    };
-
-    const handleSubmission = () => {
-        let formData = new FormData();
-        // formData.append('userId', 1);
-        formData.append('post', JSON.stringify({ message: null }));
-        formData.append('image', selectedFile);
-
-        fetch('http://localhost:3000/posts', {
-            method: 'POST',
-            mode: 'cors',
-            credentials: 'include',
-            body: formData
-        })
-            .then((res) => {
-                if (!res.ok) throw new Error(res.json().error);
-                return res.json();
-            })
-            .then(res => {
-                console.log(res.message);
-            })
-            .catch((err) => {
-
-            });
-    };
-
     useEffect(() => {
 
+        // Récupère la liste des postes auprès du serveur
         const getPosts = () => {
-            fetch('http://localhost:3000/posts', {
+            fetch(process.env.REACT_APP_SERVER_HOST + ':' + process.env.REACT_APP_SERVER_PORT + '/posts', {
                 method: 'GET',
                 credentials: 'include',
                 headers: {
@@ -57,19 +32,22 @@ const Home = () => {
                 }
             })
             .then(res => {
+                if (!res.ok) throw new Error(res.json());
                 return res.json();
             })
             .then(res => {
                 return res.posts;
             })
             .then(post => {
-                console.log(post);
                 setPosts(post);
+                console.log(post);
             })
-        }
+            .catch(err => console.error(err.error));
+        };
 
         if (!user) {
-            fetch('http://localhost:3000/auth/login', {
+            // Demande une authentification rapide au serveur si aucun utilisateur n'est actif
+            fetch(process.env.REACT_APP_SERVER_HOST + ':' + process.env.REACT_APP_SERVER_PORT + '/auth/login', {
                 method: 'POST',
                 credentials: 'include',
                 body: JSON.stringify({
@@ -97,40 +75,25 @@ const Home = () => {
         }
     }, [setPosts]);
 
-    /*useEffect(() => {
-        if (!sessionStorage.getItem('jwt')) navigate('/login');
-    
-        fetch('http://localhost:3000/posts/', {
-            method: 'GET',
-            mode: 'cors',
-        })
-        .then(res => {
-            if (!res.ok) throw new Error(res.json().error);
-            return res.json();
-        })
-        .then(res => {
-            setPosts(res);
-        })
-        .catch(err => {
-    
-        });
-    });*/
-    /*
-    <input type="file" name="file" onChange={changeHandler} />
-    <div>
-        <button onClick={handleSubmission}>Submit</button>
-            {posts.map(post => (
-                <Post key={post.id} id={post.id} userId={post.posterId} userName={post.firstname + ' ' + post.surname} profileImg={post.pictureUrl} message={post.message} image={post.imageUrl}/>
-            ))}
-    </div>
-    */
+    const [popup, setPopup] = useState([]);
+
+    // Gère les popups
+    const handlePopup = (e) => {
+        setPopup(e);
+    };
+
+    // Gère les postes
+    const handlePosts = (e) => {
+        setPosts(e);
+    };
 
     return (
         <div>
-            <h1>Home</h1>
-            <MainActionButton></MainActionButton>
+            <Header />
+            {popup ? popup : null}
+            <MainActionButton posts={handlePosts} popup={handlePopup} />
             {posts.map(data => (
-                <Post key={data.id} data={data}/>
+                <Post key={data.id} data={data} popup={handlePopup}/>
             ))}
         </div>
     );

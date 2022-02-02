@@ -1,44 +1,38 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route, useNavigate, Navigate } from "react-router-dom"
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Home from "./pages/Home"
-import Login from "./pages/Login"
-import Register from "./pages/Register"
-import NotFound from "./pages/NotFound"
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Profile from './pages/Profile';
+import Post from './pages/Post';
+import NotFound from "./pages/NotFound";
 
 import { UserContext } from './UserContext';
 
 const App = () => {
 
-  // const navigate = useNavigate();
+  // Utilisateur actif
   const [user, setUser] = useState(null);
 
+  // Initie le rafraichissement du cookie d'accès
   useEffect(() => {
-    if (!user) {
-      fetch('http://localhost:3000/auth/login', {
-        method: 'POST',
-        credentials: 'include',
-        body: JSON.stringify({
-          email: "email",
-          password: "password",
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-      })
-        .then((res) => {
-          if (!res.ok) throw new Error(res.json().error);
-          return res.json();
-        })
-        .then(res => {
-          setUser(res.user);
-        })
-        .catch((err) => {
-          return <Navigate to="/login" />;
-        });
+    if (user) {
+      setInterval(refreshToken, 14 * 60 * 1000);
     }
-  }, [setUser]);
+  });
+
+  // Rafraichis le cookie d'accès
+  const refreshToken = () => {
+    fetch(process.env.REACT_APP_SERVER_HOST + ':' + process.env.REACT_APP_SERVER_PORT + '/auth/refresh', {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    });
+  };
 
   return (
     <BrowserRouter>
@@ -47,6 +41,8 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/post" element={<Post />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </UserContext.Provider>

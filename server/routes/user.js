@@ -2,16 +2,17 @@ const express = require('express');
 const router = express.Router();
 
 const auth = require('../middleware/auth');
+const multer = require('../middleware/multer-config');
 
-const commentsCtrl = require('../controllers/comments');
+const userCtrl = require('../controllers/user');
 
 // Ajoute les routes utilisant la méthode GET
-router.get('/:postId', auth, commentsCtrl.getComments);
+router.get('/:userId', auth, userCtrl.getUserData);
 
 // Ajoute les routes utilisant la méthode POST
-router.post('/:postId', auth, commentsCtrl.addNewComment);
+router.post('/:userId', auth, multer, userCtrl.setUserProfilePicture);
 
 // Ajoute les routes utilisant la méthode DELETE
-router.delete('/:commentId', auth, commentsCtrl.deleteComment);
+router.delete('/:userId', auth, userCtrl.deleteUser);
 
 module.exports = router;

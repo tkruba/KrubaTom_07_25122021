@@ -1,13 +1,20 @@
 body {
   margin: 0;
-  min-height: 100vh;
+  height: 100%;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-attachment: scroll;
   /* background-color: #1b1b1b; */
+  overflow-x: hidden;
+  background-attachment: scroll;
+  background-position: top center;
+  background-repeat: no-repeat;
+}
+
+.scroll-lock {
+  overflow: hidden;
 }
 
 body::before {
@@ -15,11 +22,13 @@ body::before {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   background: linear-gradient(90deg, rgba(253,45,1,1) 35%, rgba(255,215,215,1) 100%);
   clip-path: circle(30% at right 70%);
   background-attachment: scroll;
+  background-position: top center;
+  background-repeat: no-repeat;
 }
 
 body::after {
@@ -27,11 +36,13 @@ body::after {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   background: linear-gradient(45deg, rgba(253,45,1,1) 45%, rgba(255,215,215,1) 100%);
   clip-path: circle(20% at 10% 10%);
   background-attachment: scroll;
+  background-position: top center;
+  background-repeat: no-repeat;
 }
 
 #root {
@@ -67,18 +78,15 @@ body::after {
   left: 0.5em;
 }
 
-.top {
-  z-index: 100000;
-  width: 3em;
-  height: 3em;
-  background-color: blue;
-  border-radius: 3em;
-  position: fixed;
-  bottom: 1em;
-  right: 1em;
+
+@media screen and (min-width: 768px) and (max-width: 1439px) {
+  .card {
+    width: 50%;
+  }
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+@media screen and (min-width: 1440px) {
+  .card {
+    width: 25%;
+  }
 }
