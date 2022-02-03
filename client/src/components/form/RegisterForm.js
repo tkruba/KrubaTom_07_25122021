@@ -49,7 +49,7 @@ const RegisterForm = () => {
         if (!nameRegex.test(firstname)) err.push('• Prénom invalide.');
         if (!nameRegex.test(surname)) err.push('• Nom invalide.');
         if (!emailRegex.test(email)) err.push('• Adresse e-mail invalide.');
-        if (!passwordRegex.test(password)) err.push('• Mot de passe invalide (doit contenir entre 7 et 15 caractère avoir 1 lettre majuscule, 1 lettre minuscule, 1 chiffre et 1 caractère spécial minimum).');
+        if (!passwordRegex.test(password)) err.push('• Mot de passe invalide (Entre 6 et 14 caractères, 1 lettre majuscule, 1 lettre minuscule, 1 chiffre et 1 caractère spécial minimum).');
         if (passwordConfirm !== password) err.push('• Confirmation de mot de passe invalide.');
 
         setErrors(err);
@@ -105,7 +105,7 @@ const RegisterForm = () => {
             <SInput type="email" name="email" required="required" id="email" value={value.email} onChange={handleInputChange.bind(this)} placeholder='utilisateur@groupomania.fr' />
 
             <SLabel htmlFor="password">Mot de passe</SLabel>
-            <SInput type="password" name="password" id="password" required="required" id="password" value={value.password} onChange={handleInputChange.bind(this)} />
+            <SInput type="password" name="password" id="password" required="required" id="password" value={value.password} onChange={handleInputChange.bind(this)} placeholder='6 à 14 caractères, 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial' />
 
             <SLabel htmlFor="passwordConfirm">Confirmation du mot de passe</SLabel>
             <SInput type="password" name="passwordConfirm" id="passwordConfirm" required="required" id="passwordConfirm" value={value.passwordConfirm} onChange={handleInputChange.bind(this)} />

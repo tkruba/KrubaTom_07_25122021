@@ -40,7 +40,7 @@ const Profile = () => {
                 }
             })
                 .then(res => {
-                    if (!res.ok) return res.json().then(text => {throw new Error(text.error)});
+                    if (!res.ok) return res.json().then(text => { throw new Error(text.error) });
                     return res.json();
                 })
                 .then(res => {
@@ -58,13 +58,12 @@ const Profile = () => {
         const setPageTitle = (res) => {
             let name = res.firstname.charAt(0).toUpperCase() + res.firstname.toLowerCase().slice(1) + ' '
                 + res.surname.charAt(0).toUpperCase() + res.surname.toLowerCase().slice(1);
-            
+
             document.title = 'Groupomania - ' + name;
         };
 
         // Récupère les postes de l'utilisateur du profil
         const getUserPosts = () => {
-
             fetch(process.env.REACT_APP_SERVER_HOST + ':' + process.env.REACT_APP_SERVER_PORT + '/posts/user/' + id, {
                 method: 'GET',
                 credentials: 'include',
@@ -74,13 +73,13 @@ const Profile = () => {
                 }
             })
                 .then(res => {
-                    if (!res.ok) return res.json().then(text => {throw new Error(text.error)});
+                    if (!res.ok) return res.json().then(text => { throw new Error(text.error) });
                     return res.json();
                 })
                 .then(res => {
                     if (res.posts.length < 1) throw new Error('Aucun post trouvé');
+                    handlePosts(res.posts);
                     setPageTitle();
-                    return setPosts(res.posts);
                 })
                 .catch(err => console.error(err.message));
         };
@@ -100,7 +99,7 @@ const Profile = () => {
                 },
             })
                 .then((res) => {
-                    if (!res.ok) return res.json().then(text => {throw new Error(text.error)});
+                    if (!res.ok) return res.json().then(text => { throw new Error(text.error) });
                     return res.json();
                 })
                 .then(res => {
