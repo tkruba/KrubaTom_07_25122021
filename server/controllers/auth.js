@@ -15,10 +15,10 @@ exports.login = async (req, res, next) => {
     let refreshCookie = req.cookies.groupomaniaRefreshToken;
     // Vérifie l'existance d'un cookie de rafraichissement 'groupomaniaRefreshToken'
     if (refreshCookie) return jwt.verify(refreshCookie, process.env.JWT_REFRESH_TOKEN, async (err, token) => {
-        if (err) return res.status(401);
+        if (err) return res.clearCookie('groupomaniaAccessToken').clearCookie('groupomaniaRefreshToken').status(401);
 
         // Vérifie que l'utilisateur indiqué par le cookie existe
-        if (await !users.isRegistered(token.user.email)) return res.clearCookie('groupomaniaAccessToken').clearCookie('groupomaniaRefreshToken').status(500);
+        if (!await users.isRegistered(token.user.email)) return res.clearCookie('groupomaniaAccessToken').clearCookie('groupomaniaRefreshToken').status(500);
         
         // Créer un cookie d'accès et authentifie rapidement l'utilisateur du cookie
         const accessToken = jwt.sign({ user: token.user }, process.env.JWT_ACCESS_TOKEN, { expiresIn: '15m' });
@@ -37,10 +37,10 @@ exports.login = async (req, res, next) => {
     if (!emailRegex.test(req.body.email)) return res.status(415).json({ error: "Adresse e-mail invalide." });
 
     // Vérifie que l'utilisateur lié à cette adresse e-mail existe
-    if (await !users.isRegistered(req.body.email)) return res.status(500).json({ error: "Utilisateur non trouvée." });
+    if (!await users.isRegistered(req.body.email)) return res.status(500).json({ error: "Utilisateur non trouvée." });        
 
     // Vérifie que le mot de passe de l'utilisateur est le bon
-    if (await !users.areCredentialsValid(req.body.email, req.body.password)) return res.status(500).json({ error: "Mot de passe erroné." });
+    if (!await users.areCredentialsValid(req.body.email, req.body.password)) return res.status(500).json({ error: "Mot de passe erroné." });
 
     let user = await users.getUser(req.body.email);
     delete user.password;
@@ -96,7 +96,7 @@ exports.refreshAccessToken = async (req, res) => {
         if (err) return res.status(401);
 
         // Vérifie que l'utilisateur indiqué par le cookie existe
-        if (await !users.isRegistered(token.user.email)) return res.clearCookie('groupomaniaAccessToken').clearCookie('groupomaniaRefreshToken').status(500);
+        if (!await users.isRegistered(token.user.email)) return res.clearCookie('groupomaniaAccessToken').clearCookie('groupomaniaRefreshToken').status(500);
         
         // Retourne un cookie d'autentification au client.
         const accessToken = jwt.sign({ user: token.user }, process.env.JWT_ACCESS_TOKEN, { expiresIn: '15m' });

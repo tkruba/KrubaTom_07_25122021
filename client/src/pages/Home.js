@@ -6,6 +6,7 @@ import Header from '../components/header/Header';
 
 import Post from '../components/posts/Post';
 import MainActionButton from '../components/actionButton/MainActionButton';
+import Error from '../components/error/Error';
 
 
 // Page d'accueil
@@ -32,7 +33,7 @@ const Home = () => {
                 }
             })
             .then(res => {
-                if (!res.ok) throw new Error(res.json());
+                if (!res.ok) return res.json().then(text => {throw new Error(text.error)});
                 return res.json();
             })
             .then(res => {
@@ -40,9 +41,8 @@ const Home = () => {
             })
             .then(post => {
                 setPosts(post);
-                console.log(post);
             })
-            .catch(err => console.error(err.error));
+            .catch(err => console.error(err.message));
         };
 
         if (!user) {
@@ -60,7 +60,7 @@ const Home = () => {
                 },
             })
                 .then((res) => {
-                    if (!res.ok) throw new Error(res.json().error);
+                    if (!res.ok) return res.json().then(text => {throw new Error(text.error)});
                     return res.json();
                 })
                 .then(res => {
@@ -92,9 +92,10 @@ const Home = () => {
             <Header />
             {popup ? popup : null}
             <MainActionButton posts={handlePosts} popup={handlePopup} />
-            {posts.map(data => (
+            
+            {posts.length > 0 ? posts.map(data => (
                 <Post key={data.id} data={data} popup={handlePopup}/>
-            ))}
+            )) : <Error message={'Aucun poste n\'a été publié. 😞 \rN\'hésitez pas a corriger ce problème !'}/>}
         </div>
     );
 };

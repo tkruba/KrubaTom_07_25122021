@@ -45,14 +45,14 @@ const Popup = (props) => {
             }
         })
         .then(res => {
-            if (!res.ok) throw new Error(res.json());
+            if (!res.ok) return res.json().then(text => {throw new Error(text.error)});
             return res.json();
         })
         .then(() => {
             closePopup();
             window.location.reload();
         })
-        .catch(err => console.error(err.error));
+        .catch(err => console.error(err.message));
     };
 
     // Fait une requête pour supprimer un poste au serveur
@@ -66,31 +66,33 @@ const Popup = (props) => {
             },
         })
             .then(res => {
-                if (!res.ok) throw new Error(res.json());
+                if (!res.ok) return res.json().then(text => {throw new Error(text.error)});
                 return res.json();
             })
             .then(res => {
                 closePopup();
                 getComments();
             })
-            .catch(err => console.error(err.error));
+            .catch(err => console.error(err.message));
     };
 
+    // Fait une requête pour récupérer les commentaires d'un poste
     const getComments = () => {
         fetch(process.env.REACT_APP_SERVER_HOST + ':' + process.env.REACT_APP_SERVER_PORT + '/comments/' + props.post.id, {
             method: 'GET',
             credentials: 'include',
         })
             .then(res => {
-                if (!res.ok) throw new Error(res.json());
+                if (!res.ok) return res.json().then(text => {throw new Error(text.error)});
                 return res.json();
             })
             .then(res => {
                 handleComments(res.comments);
             })
-            .catch(err => console.error(err.error));
+            .catch(err => console.error(err.message));
     }
 
+    // Gère les commentaires
     const handleComments = (e) => {
         props.comments(e);
     }
@@ -106,7 +108,7 @@ const Popup = (props) => {
             }
         })
         .then(res => {
-            if (!res.ok) throw new Error(res.json());
+            if (!res.ok) return res.json().then(text => {throw new Error(text.error)});
             return res.json();
         })
         .then(res => {
@@ -120,7 +122,7 @@ const Popup = (props) => {
                 navigate('/');
             }
         })
-        .catch(err => console.error(err.error));
+        .catch(err => console.error(err.message));
     };
 
     // Vérouille le scroll de la page à l'affichage du popup

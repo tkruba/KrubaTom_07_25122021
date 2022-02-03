@@ -5,6 +5,7 @@ import { UserContext } from '../UserContext';
 
 import Header from '../components/header/Header';
 import Posts from '../components/posts/Post';
+import Error from '../components/error/Error';
 
 
 // Page d'un poste
@@ -36,16 +37,13 @@ const Post = () => {
                 },
             })
                 .then(res => {
-                    if (!res.ok) throw new Error(res.json());
+                    if (!res.ok) return res.json().then(text => {throw new Error(text.error)});
                     return res.json();
                 })
                 .then(res => {
                     setData(res.post);
-                    console.log(res.post);
                 })
-                .catch(err => {
-                    console.log(err);
-                });
+                .catch(err => console.error(err.message));
         };
 
         if (!user) {
@@ -63,7 +61,7 @@ const Post = () => {
                 },
             })
                 .then((res) => {
-                    if (!res.ok) throw new Error(res.json().error);
+                    if (!res.ok) return res.json().then(text => {throw new Error(text.error)});
                     return res.json();
                 })
                 .then(res => {
@@ -81,7 +79,7 @@ const Post = () => {
     return (
         <div>
             <Header />
-            {data ? <Posts data={data} /> : null}
+            {data ? <Posts data={data} /> : <Error message={'Le poste n\'existe pas.'}/>}
         </div>
     );
 };

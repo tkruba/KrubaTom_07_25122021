@@ -36,7 +36,7 @@ module.exports = {
             query = "SELECT password FROM users WHERE email = ?";
             const rows = await conn.query(query, email);
             conn.end();
-            return (rows.length == 1 && bcrypt.compare(password, rows[0].password)) ? true : false;
+            return (await bcrypt.compare(password, rows[0].password)) ? true : false;
         } catch (err) {
             throw err;
         }

@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import { Routes, Route, Link } from "react-router-dom";
 import { SDiv, SData, SProfilePic, SUser, SActions, SAction, SActionAdmin, SMessage, SImage, SCommentsControl, SComments, SComment, SCommentMessage } from './style';
 import Profile from "../../pages/Profile";
@@ -19,7 +19,7 @@ const Post = (props) => {
     let userProfileUrl = '/profile?id=' + props.data.posterId;
 
     let name = props.data.firstname.charAt(0).toUpperCase() + props.data.firstname.toLowerCase().slice(1) + ' '
-        + props.data.surname.charAt(0).toUpperCase() + props.data.surname.toLowerCase().slice(1)
+        + props.data.surname.charAt(0).toUpperCase() + props.data.surname.toLowerCase().slice(1);
 
     let profileImgAlt = 'Photo de profil de ' + name;
 
@@ -40,13 +40,14 @@ const Post = (props) => {
         handlePopup(<Popup deletePost={props.data} postId={props.data.id} popup={props.popup}></Popup>);
     }
 
+    // Récupère les commentaires du poste
     const getComments = () => {
         fetch(process.env.REACT_APP_SERVER_HOST + ':' + process.env.REACT_APP_SERVER_PORT + '/comments/' + props.data.id, {
             method: 'GET',
             credentials: 'include',
         })
             .then(res => {
-                if (!res.ok) throw new Error(res.json());
+                if (!res.ok) return res.json().then(text => {throw new Error(text.error)});
                 return res.json();
             })
             .then(res => {
@@ -54,34 +55,38 @@ const Post = (props) => {
                 if (!res.comments.length > 0) setCommentsShown(false);
                 handleComments(res.comments);
             })
-            .catch(err => console.error(err.error));
+            .catch(err => console.error(err.message));
     }
 
+    // Gère les commentaires
     const handleComments = (e) => {
         props.data.comments = e.length;
         setComments(e);
     }
 
+    // Change l'état d'affichage des commentaires
     const toggleComments = () => {
         if (!commentsShown) {
             getComments();
             setCommentsShown(true);
         } else {
-            handleComments([]);
             setCommentsShown(false);
         }
     }
 
+    // Fait apparaître le formulaire de création de commentaire
     const newCommentForm = () => {
         handlePopup(<Popup newComment={true} post={props.data} popup={props.popup} comments={handleComments} />);
     }
 
+    // Gère le bouton des commentaires
     const commentSectionHandler = () => {
         if (!props.data.comments > 0) return <SAction onClick={() => newCommentForm()}><FontAwesomeIcon icon={faPen} /> Ajouter un commentaire</SAction>;
         if (!commentsShown) return <SAction onClick={() => toggleComments()}><FontAwesomeIcon icon={faComments} /> Afficher les {props.data.comments} commentaires</SAction>;
         return <SAction onClick={() => toggleComments()}><FontAwesomeIcon icon={faComments} /> Masquer les commentaires</SAction>
     }
 
+    // Affiche le confirmation de suppression d'un commentaire
     const deleteComment = (e) => {
         handlePopup(<Popup deleteComment={e} post={props.data} comments={handleComments} popup={props.popup}></Popup>);
     }

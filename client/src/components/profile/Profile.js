@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { SProfile, SProfileUser, SProfilePicture, SProfileEmailContainer, SProfileEmail, SProfileActions, SProfileButtons } from './style';
 
 import { UserContext } from '../../UserContext';

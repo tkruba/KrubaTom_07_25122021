@@ -60,7 +60,7 @@ const LoginForm = () => {
             }),
         })
             .then((res) => {
-                if (!res.ok) throw new Error(res.json());
+                if (!res.ok) return res.json().then(text => { throw new Error(text.error)});
                 return res.json();
             })
             .then(res => {
@@ -69,7 +69,7 @@ const LoginForm = () => {
                 navigate('/');
             })
             .catch((err) => {
-                setErrors('• ' + err.error);
+                setErrors(['• ' + err.message]);
             });
     };
 

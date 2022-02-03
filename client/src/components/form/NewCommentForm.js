@@ -76,7 +76,7 @@ const NewCommentForm = (props) => {
             }
         })
             .then(res => {
-                if (!res.ok) throw new Error(res.json());
+                if (!res.ok) return res.json().then(text => {throw new Error(text.error)});
                 return res.json();
             })
             .then(res => {
@@ -85,7 +85,7 @@ const NewCommentForm = (props) => {
             .then(comments => {
                 handleComments(comments);
             })
-            .catch(err => console.error(err.error));
+            .catch(err => console.error(err.message));
     };
 
     return (

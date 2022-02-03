@@ -11,7 +11,7 @@ module.exports = (req, res, next) => {
         if (err) return res.status(401).json({ error: 'Unauthenticated user.', issue: err });
         
         // Vérifie que l'utilisateur lié au cookie d'accès existe
-        if (await !users.isRegistered(token.user.email)) return res.status(401).json({ error: 'User not found' });
+        if (!await users.isRegistered(token.user.email)) return res.status(401).json({ error: 'User not found' });
         req.user = token.user;
         
         next();

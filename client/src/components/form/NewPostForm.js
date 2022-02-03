@@ -53,7 +53,7 @@ const NewPostForm = (props) => {
             body: formData
         })
             .then(res => {
-                if (!res.ok) throw new Error(res.json());
+                if (!res.ok) return res.json().then(text => {throw new Error(text.error)});
                 return res.json();
             })
             .then(res => {
@@ -61,7 +61,7 @@ const NewPostForm = (props) => {
                 handlePopup();
                 toggleScrollLock();
             })
-            .catch(err => console.error(err));
+            .catch(err => console.error(err.message));
     };
 
     // Dévérouille la possibilité de scroller dans la page web
@@ -91,7 +91,7 @@ const NewPostForm = (props) => {
             }
         })
             .then(res => {
-                if (!res.ok) throw new Error(res.json());
+                if (!res.ok) return res.json().then(text => {throw new Error(text.error)});
                 return res.json();
             })
             .then(res => {
@@ -103,7 +103,7 @@ const NewPostForm = (props) => {
                 let url = new URL(urlString);
                 if (!url.pathname === '/') navigate('/');
             })
-            .catch(err => console.error(err.error));
+            .catch(err => console.error(err.message));
     };
 
     return (

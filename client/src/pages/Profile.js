@@ -40,14 +40,26 @@ const Profile = () => {
                 }
             })
                 .then(res => {
-                    if (!res.ok) throw new Error(res.json());
+                    if (!res.ok) return res.json().then(text => {throw new Error(text.error)});
                     return res.json();
                 })
                 .then(res => {
                     setData(res.user);
                     getUserPosts();
+                    return res.user;
                 })
-                .catch(err => console.error(err.error));
+                .then(res => {
+                    setPageTitle(res);
+                })
+                .catch(err => console.error(err.message));
+        };
+
+        // Redéfinie le titre de la page
+        const setPageTitle = (res) => {
+            let name = res.firstname.charAt(0).toUpperCase() + res.firstname.toLowerCase().slice(1) + ' '
+                + res.surname.charAt(0).toUpperCase() + res.surname.toLowerCase().slice(1);
+            
+            document.title = 'Groupomania - ' + name;
         };
 
         // Récupère les postes de l'utilisateur du profil
@@ -62,15 +74,15 @@ const Profile = () => {
                 }
             })
                 .then(res => {
-                    if (!res.ok) throw new Error(res.json());
+                    if (!res.ok) return res.json().then(text => {throw new Error(text.error)});
                     return res.json();
                 })
                 .then(res => {
                     if (res.posts.length < 1) throw new Error('Aucun post trouvé');
-                    console.log(res.posts);
+                    setPageTitle();
                     return setPosts(res.posts);
                 })
-                .catch(err => console.error(err.error));
+                .catch(err => console.error(err.message));
         };
 
         if (!user) {
@@ -88,7 +100,7 @@ const Profile = () => {
                 },
             })
                 .then((res) => {
-                    if (!res.ok) throw new Error(res.json().error);
+                    if (!res.ok) return res.json().then(text => {throw new Error(text.error)});
                     return res.json();
                 })
                 .then(res => {

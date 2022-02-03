@@ -49,14 +49,14 @@ const MainActionButton = (props) => {
             credentials: 'include'
         })
             .then((res) => {
-                if (!res.ok) throw new Error(res.json());
+                if (!res.ok) return res.json().then(text => {throw new Error(text.error)});
                 return res.json();
             })
             .then(res => {
                 navigate('/login');
                 setUser(null);
             })
-            .catch(err => console.error(err.error));
+            .catch(err => console.error(err.message));
     };
 
     // Vérifie la page et autorise la création d'un nouveau poste ou non
