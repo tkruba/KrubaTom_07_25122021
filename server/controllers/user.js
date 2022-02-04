@@ -66,6 +66,7 @@ exports.deleteUser = async (req, res, next) => {
     userPosts.forEach(post => {
         if (post.imageUrl) fs.unlink(`images/${post.imageUrl}`, (err) => {
         });
+        comments.deleteAllComments(post.id);
     });
     posts.deletePostFromUser(req.params.userId);
 

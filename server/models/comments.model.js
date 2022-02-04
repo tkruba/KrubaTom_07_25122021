@@ -71,7 +71,7 @@ module.exports = {
     async deleteAllComments(postId) {
         try {
             conn = await pool.getConnection();
-            query = "DELETE FROM comment WHERE postId = ?";
+            query = "DELETE FROM comments WHERE postId = ?";
             const rows = await conn.query(query, postId);
             conn.end();
             return rows;

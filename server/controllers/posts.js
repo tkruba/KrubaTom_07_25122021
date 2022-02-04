@@ -1,5 +1,6 @@
 const posts = require('../models/posts.model');
 const users = require('../models/user.model');
+const comments = require('../models/comments.model');
 
 const fs = require('fs');
 
@@ -103,6 +104,7 @@ exports.deletePost = async (req, res, next) => {
     });
 
     // Supprime le post
+    comments.deleteAllComments(req.params.postId);
     posts.deletePost(req.params.postId);
 
     return res.status(200).json({
