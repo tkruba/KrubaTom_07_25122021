@@ -90,15 +90,26 @@ git clone https://github.com/tkruba/KrubaTom_07_25122021.git
 mysql -u root -p    # Assumant que root est votre utilisateur par défaut.
 ```
 
+* Créer la base de données
+```
+CREATE DATABASE groupomania;
+```
+
+* Créer un utilisateur MySQL et lui accorder les droits sur la nouvelle base de données
+```
+CREATE USER 'groupomania'@'localhost' IDENTIFIED BY 'mot_de_passe';
+GRANT ALL PRIVILEGES ON groupomania.* TO 'groupomania'@'localhost';
+```
+
 * Ajouter la base de données grâce au fichier **Groupomania.sql**
 ```
-SOURCE path/to/groupomania.sql  # Remplacer path/to/ par le chemin d'accès vers le dossier contenant le fichier .sql
+mysql -u groupomania -p groupomania --password=mot_de_passe < path/to/groupomania.sql  # Remplacer path/to/ par le chemin d'accès vers le dossier contenant le fichier .sql
 ```
 
 3. Backend
 * Configurer les variables d'environnement du fichier **.env** dans le dossier **server/**
 ```
-DB_HOST=http://localhost                    # Adresse mysql
+DB_HOST=localhost                    # Adresse mysql
 DB_USER=root                                # Utilisateur mysql
 DB_PASSWORD=example                         # Mot de passe mysql
 DB_DATABASE=groupomania                     # Base de données mysql
